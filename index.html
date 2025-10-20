@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恋愛おみくじ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '♡';
+            position: absolute;
+            font-size: 200px;
+            color: rgba(255, 192, 203, 0.1);
+            top: -50px;
+            right: -50px;
+            transform: rotate(15deg);
+        }
+
+        h1 {
+            color: #ff69b4;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .omikuji-box {
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4f0 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-fortune {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ff1493;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result-message {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #d946a6;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .initial-message {
+            font-size: 1.3em;
+            color: #ff69b4;
+            line-height: 2;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 105, 180, 0.3);
+            font-size: 20px;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hearts" id="hearts"></div>
+        <h1>💕 恋愛おみくじ 💕</h1>
+        <div class="omikuji-box" id="result">
+            <div class="initial-message">
+                ボタンを押して<br>
+                今日の恋愛運を占ってみよう！
+            </div>
+        </div>
+        <button onclick="drawOmikuji()">おみくじを引く</button>
+    </div>
+
+    <script>
+        const fortunes = [
+            {
+                level: '大吉',
+                messages: [
+                    '素敵な出会いが訪れる予感！\n積極的に行動すると良い日です♡',
+                    '運命の人との距離が縮まりそう！\n勇気を出して気持ちを伝えてみて♡',
+                    '恋愛運絶好調！\n今日のあなたは魅力が輝いています✨'
+                ]
+            },
+            {
+                level: '中吉',
+                messages: [
+                    '穏やかな幸せが訪れそう\n焦らずゆっくり進んでいきましょう',
+                    '友達から恋に発展する可能性が！\n周りの人を大切にしてね💕',
+                    '小さな幸せを見つけられる日\n笑顔でいることを心がけて😊'
+                ]
+            },
+            {
+                level: '小吉',
+                messages: [
+                    '自分磨きに最適な時期です\n内面も外見も磨いていきましょう',
+                    'じっくり相手を見極める時\n焦らず慎重に進んでね',
+                    '友達との時間を大切に\nそこから新しい縁が生まれるかも'
+                ]
+            },
+            {
+                level: '吉',
+                messages: [
+                    '穏やかな日々が続きそう\n今は自分の時間を楽しんで',
+                    '相手の気持ちを考えることで\n二人の関係が深まりそう💕',
+                    'コミュニケーションを大切に\n言葉で気持ちを伝えてみて'
+                ]
+            },
+            {
+                level: '末吉',
+                messages: [
+                    '焦りは禁物！\nゆっくり時間をかけて関係を築いて',
+                    '今は充電期間\n自分のことを見つめ直す時間も大切',
+                    '友達に相談してみると\n良いアドバイスがもらえそう'
+                ]
+            },
+            {
+                level: '凶',
+                messages: [
+                    '今は焦らず待つことも大切\n次のチャンスに備えましょう',
+                    '自分磨きの時期です\n趣味や勉強に時間を使ってね',
+                    '無理に動かず今は休息を\n運気は必ず上向きます！'
+                ]
+            }
+        ];
+
+        function drawOmikuji() {
+            const resultBox = document.getElementById('result');
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            const randomMessage = randomFortune.messages[Math.floor(Math.random() * randomFortune.messages.length)];
+            
+            resultBox.innerHTML = `
+                <div class="result-fortune">${randomFortune.level}</div>
+                <div class="result-message">${randomMessage}</div>
+            `;
+
+            createHearts();
+        }
+
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            heartsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = '♡';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heartsContainer.appendChild(heart);
+            }
+        }
+    </script>
+</body>
+</html>
